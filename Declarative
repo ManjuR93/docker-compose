@@ -1,0 +1,41 @@
+pipeline {
+    agent none
+     tools { 
+        maven 'Maven 3.3.9' 
+        jdk 'jdk8' 
+    }
+    stages {
+        stage('Build') { 
+            steps { 
+               echo 'This is a minimal pipeline.' 
+            }
+        }
+        stage('Run Tests') {
+            parallel {
+                stage('Test On Windows') {
+                    agent {
+                        label "agent"
+                    }
+                    steps {
+                        echo 'This is a Parallel pipeline.' 
+                    }
+                    post {
+                        always {
+                            echo 'This is a post step in pipeline.' 
+                        }
+                    }
+                }
+                stage('Test On Linux') {                 
+                    steps {
+                        echo 'This is a Parallel pipeline.' 
+                    }
+                    post {
+                        always {
+                           echo 'This is a Parallel pipeline.' 
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
