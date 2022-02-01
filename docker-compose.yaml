@@ -1,0 +1,36 @@
+# docker-compose.yaml
+version: '3.8'
+services:
+  BuildSystem:
+    image: jenkins/jenkins:lts
+    restart: always
+    privileged: true
+    user: root
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    container_name: jenkins
+    volumes:
+      - /home/%user%/jenkins_compose/jenkins_configuration:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+  agent:
+    image: jenkins/ssh-agent:jdk11
+    privileged: true
+    user: root
+    container_name: agent
+    expose:
+      - 22
+    environment:
+      - JENKINS_AGENT_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDiOcf3cpza7FP64r7ioQyZHz97gsrpFnxvIwkbuYSLqhfjO2OM0jHwSnVzOg+PJ4DbyQnzL+vy2RFS33Q0br1gHcH0rd6e8D8HiHOjrHtBk4LbTNDJn8gK3qPqmociYOEcP8gjGrenOUYiPjr+YoAkp4PzR/6FHmrbpYPa/WfEoj7ENTtxz0jEgjgJhJMq1oMu//XUkIQ0uJxnHJRp0XQhLfs8uhYzHpe+y2F434zmnBBPSYIM75eeucf6CHQHryXhDPOvn50qfZGV/FL3qj/7vYEFbkip33yXx2ctQ6G5rZNgv4p4fK196jMwFoWVVIFSxoDC2Yf7/KuEUsYZFnao4DLPgTRAbgsDTRndheevV5ChGTiW0RyaPaHlW4WjLnBQWQTreXuUKvai+4TaIu87/16Fss9WnuKUqxmY4N6NyD7OmnZ8c8gr3JseuidXyYNaq3b0VUAv/yNnIdc1AezlnTSFviaE/AwUD4GJHm3PS+lL/Uq9wpFzYtE9gT8Z72M= jrn1cob@COB5-C-000ME
+
+  #---------------------Docker Management System-------------------------------#
+  ContainerManagementSystem:
+    image: portainer/portainer-ce
+    container_name: portainer
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:8000"
+    volumes:
+      - /home/%user%/portainer_home:/var/portainer_home
+      - /var/run/docker.sock:/var/run/docker.sock
